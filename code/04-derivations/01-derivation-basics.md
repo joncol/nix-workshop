@@ -64,7 +64,7 @@ Hello World!
 This may take some time to load on your computer, as Nix fetches the essential
 build tools that are commonly needed to build Nix packages.
 
-We can also build the derivation within Nix repl using the `:b` command:
+We can also build the derivation within the Nix repl using the `:b` command:
 
 ```nix
 nix-repl> :b hello-drv
@@ -76,9 +76,9 @@ this derivation produced the following outputs:
 
 ## Tracing Derivation
 
-Our `hello-drv` produce the same output as `hello.txt` in previous chapter,
-but produce different output in the Nix store. (previously we had
-`/nix/store/925f1jb1ajrypjbyq7rylwryqwizvhp0-hello.txt`)
+Our `hello-drv` produces the same output as `hello.txt` in the previous chapter,
+but produces different output in the Nix store (previously we had
+`/nix/store/925f1jb1ajrypjbyq7rylwryqwizvhp0-hello.txt`).
 
 We can trace the dependencies of the derivation back to its source:
 
@@ -90,11 +90,10 @@ $ nix-store --query --deriver /nix/store/925f1jb1ajrypjbyq7rylwryqwizvhp0-hello.
 unknown-deriver
 ```
 
-Our `hello.txt` built from `stdenv.mkDerivation` is built from a derivation
-artifact `hello.txt.drv`, but our `hello.txt` created from `builtins.path`
-has no deriver.
-In other words, the Nix artifacts are different because they are produced from
-different derivations.
+Our `hello.txt` built using `stdenv.mkDerivation` is built from a derivation
+artifact `hello.txt.drv`, but our `hello.txt` created from `builtins.path` has
+no deriver. In other words, the Nix artifacts are different because they are
+produced from different derivations.
 
 We can further trace the dependencies of `hello.txt.drv`:
 
@@ -105,20 +104,21 @@ $ nix-store -qR /nix/store/ad6c51ia15p9arjmvvqkn9fys9sf1kdw-hello.txt.drv
 ...
 ```
 
-That's a lot of dependencies! Where are they being used? We will learn about it
-in the next chapter.
+That's a lot of dependencies! Where are they being used? We will learn about
+that in the next chapter.
 
 ## Derivation in a Nix File
 
 We save the same earlier derivation we defined inside a Nix file named
-[`hello.nix`](01-derivation-basics/hello.nix). Now we can build our derivation directly:
+[`hello.nix`](01-derivation-basics/hello.nix). Now we can build our derivation
+directly:
 
 ```bash
 $ nix-build 04-derivations/01-derivation-basics/hello.nix
 /nix/store/z449wrqvwncs8clk7bsliabv1g1ci3n3-hello.txt
 ```
 
-We can also get the derivation without building it using `nix-instantiate`:
+We can also get the derivation without building it, using `nix-instantiate`:
 
 ```bash
 $ nix-instantiate 04-derivations/01-derivation-basics/hello.nix
@@ -126,8 +126,8 @@ warning: you did not specify '--add-root'; the result might be removed by the ga
 /nix/store/ad6c51ia15p9arjmvvqkn9fys9sf1kdw-hello.txt.drv
 ```
 
-Ignore the warning from `nix-instantiate`, as we don't care whether the derivation
-is deleted during Nix garbage collection.
+Ignore the warning from `nix-instantiate`, as we don't care whether the
+derivation is deleted during Nix garbage collection.
 
 Notice that both the derivation and the build output have the same hash
 as the earlier result we had in `nix repl`.
@@ -135,8 +135,8 @@ as the earlier result we had in `nix repl`.
 ## Caching Nix Build Artifacts
 
 We create [`hello-sleep.nix`](01-derivation-basics/hello-sleep.nix) as a variant of
-`hello.nix` which sleeps for 10 seconds in its `buildPhase`.
-(We will go through how each phase works in the next chapter)
+`hello.nix` which sleeps for 10 seconds in its `buildPhase`
+(we will go through how each phase works in the next chapter).
 The 10 seconds sleep simulates the time taken to compile a program.
 We can see what happens when we try to build the same Nix derivation
 multiple times.
@@ -153,7 +153,8 @@ sys     0m0,032s
 ```
 
 The first time we build `hello-sleep.nix`, it is going to take about 10 seconds.
-We can also see the logs we printed during the build phase is shown:
+We can also see that the log messages that we printed during the build phase are
+shown:
 
 ```bash
 $ time nix-build 04-derivations/01-derivation-basics/hello-sleep.nix
@@ -195,7 +196,7 @@ sys     0m0,047s
 Nix determines whether a derivation needs to be rebuilt based on the input
 derivation. For our case, in both calls to `hello-sleep.nix`,
 `nix-build` instantiates the derivation behind the scene: i.e.
-`/nix/store/58ngrpwgv6hl633a1iyjbmjqlbdqjw92-hello.txt.drv`. 
+`/nix/store/58ngrpwgv6hl633a1iyjbmjqlbdqjw92-hello.txt.drv`.
 So it determines that the result has previously already
 been built, and reuses the same Nix artifact.
 
